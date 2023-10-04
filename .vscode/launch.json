@@ -1,0 +1,105 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "ecommerce_hub",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "ecommerce_hub (profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "ecommerce_hub (release mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "ecommerce_admin_app",
+            "cwd": "packages\\ecommerce_admin_app",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "ecommerce_admin_app (profile mode)",
+            "cwd": "packages\\ecommerce_admin_app",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "ecommerce_admin_app (release mode)",
+            "cwd": "packages\\ecommerce_admin_app",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "ecommerce_customer_app",
+            "cwd": "packages\\ecommerce_customer_app",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "ecommerce_customer_app (profile mode)",
+            "cwd": "packages\\ecommerce_customer_app",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "ecommerce_customer_app (release mode)",
+            "cwd": "packages\\ecommerce_customer_app",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "ecommerce_domain",
+            "cwd": "packages\\ecommerce_domain",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "ecommerce_domain (profile mode)",
+            "cwd": "packages\\ecommerce_domain",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "ecommerce_domain (release mode)",
+            "cwd": "packages\\ecommerce_domain",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "text_avatar",
+            "cwd": "packages\\text_avatar",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "text_avatar (profile mode)",
+            "cwd": "packages\\text_avatar",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "text_avatar (release mode)",
+            "cwd": "packages\\text_avatar",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+    ]
+}
