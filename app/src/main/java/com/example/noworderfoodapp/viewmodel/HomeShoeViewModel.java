@@ -7,10 +7,12 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.noworderfoodapp.CommonUtils;
 import com.example.noworderfoodapp.api.ApiService;
+import com.example.noworderfoodapp.entity.Banner;
 import com.example.noworderfoodapp.entity.Category;
 import com.example.noworderfoodapp.entity.Orders;
 import com.example.noworderfoodapp.entity.Products;
 import com.example.noworderfoodapp.entity.ResponseDTO;
+import com.example.noworderfoodapp.entity.Shop;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,68 +22,70 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class HomeShoeViewModel extends ViewModel {
-    private MutableLiveData<List<Category>> categoryMutableLiveData;
-    private MutableLiveData<List<Products>> productsMutableLiveData;
+    private MutableLiveData<List<Shop>> shopMutableLiveData;
+    private MutableLiveData<List<Banner>> bannerMutableLiveData;
 
-    public MutableLiveData<List<Products>> getProductsMutableLiveData() {
-        return productsMutableLiveData;
+    public MutableLiveData<List<Shop>> getShopMutableLiveData() {
+        return shopMutableLiveData;
     }
-    public MutableLiveData<List<Category>> getCategoryMutableLiveData() {
-        return categoryMutableLiveData;
+    public MutableLiveData<List<Banner>> getBannerMutableLiveData() {
+        return bannerMutableLiveData;
     }
 
-    public void setCategoryMutableLiveData(MutableLiveData<List<Category>> categoryMutableLiveData) {
-        this.categoryMutableLiveData = categoryMutableLiveData;
+    public void setBannerMutableLiveData(MutableLiveData<List<Banner>> bannerMutableLiveData) {
+        this.bannerMutableLiveData = bannerMutableLiveData;
     }
 
     public HomeShoeViewModel(){
-        categoryMutableLiveData = new MutableLiveData<>();
-        productsMutableLiveData = new MutableLiveData<>();
+        bannerMutableLiveData = new MutableLiveData<>();
+        shopMutableLiveData = new MutableLiveData<>();
     }
 
-    public void getListCategory(){
-        Call<ResponseDTO<List<Category>>> call = ApiService.apiService.
-                getListCategory();
+    public void getListShopServer(){
+        Call<ResponseDTO<List<Shop>>> call = ApiService.apiService.
+                getListShop();
         //   Call<ResponseDTO<List<User>>> call = ApiService.apiService.getListUser();
-        call.enqueue(new Callback<ResponseDTO<List<Category>>>() {
+        call.enqueue(new Callback<ResponseDTO<List<Shop>>>() {
             @Override
-            public void onResponse(Call<ResponseDTO<List<Category>>> call,
-                                   Response<ResponseDTO<List<Category>>> response) {
+            public void onResponse(Call<ResponseDTO<List<Shop>>> call,
+                                   Response<ResponseDTO<List<Shop>>> response) {
                 if (response.isSuccessful()) {
-                    ResponseDTO<List<Category>> apiResponse = response.body();
-                    List<Category> orders = apiResponse.getData();
+                    ResponseDTO<List<Shop>> apiResponse = response.body();
+                    List<Shop> listShop = apiResponse.getData();
                     // Xử lý dữ liệu User...
-                    if (orders != null) {
-                        categoryMutableLiveData.postValue(orders);
+                    if (listShop != null) {
+                        shopMutableLiveData.postValue(listShop);
+
                     }
                 } else {
                     // Xử lý khi có lỗi từ API
-                    Log.i("KMFG", "onFailure: ");
+
                 }
             }
 
             @Override
-            public void onFailure(Call<ResponseDTO<List<Category>>> call, Throwable t) {
+            public void onFailure(Call<ResponseDTO<List<Shop>>> call, Throwable t) {
                 // Xử lý khi gặp lỗi trong quá trình gọi API
                 Log.i("KMFG", "onFailure: "+t.getMessage());
             }
         });
     }
 
-    public void getListProducts(){
-        Call<ResponseDTO<List<Products>>> call = ApiService.apiService.
-                getListProducts();
+
+    public void getListBanner(){
+        Call<ResponseDTO<List<Banner>>> call = ApiService.apiService.
+                getListBanner();
         //   Call<ResponseDTO<List<User>>> call = ApiService.apiService.getListUser();
-        call.enqueue(new Callback<ResponseDTO<List<Products>>>() {
+        call.enqueue(new Callback<ResponseDTO<List<Banner>>>() {
             @Override
-            public void onResponse(Call<ResponseDTO<List<Products>>> call,
-                                   Response<ResponseDTO<List<Products>>> response) {
+            public void onResponse(Call<ResponseDTO<List<Banner>>> call,
+                                   Response<ResponseDTO<List<Banner>>> response) {
                 if (response.isSuccessful()) {
-                    ResponseDTO<List<Products>> apiResponse = response.body();
-                    List<Products> orders = apiResponse.getData();
+                    ResponseDTO<List<Banner>> apiResponse = response.body();
+                    List<Banner> orders = apiResponse.getData();
                     // Xử lý dữ liệu User...
                     if (orders != null) {
-                        productsMutableLiveData.postValue(orders);
+                        bannerMutableLiveData.postValue(orders);
                     }
                 } else {
                     // Xử lý khi có lỗi từ API
@@ -90,7 +94,7 @@ public class HomeShoeViewModel extends ViewModel {
             }
 
             @Override
-            public void onFailure(Call<ResponseDTO<List<Products>>> call, Throwable t) {
+            public void onFailure(Call<ResponseDTO<List<Banner>>> call, Throwable t) {
                 // Xử lý khi gặp lỗi trong quá trình gọi API
                 Log.i("KMFG", "onFailure: "+t.getMessage());
             }
