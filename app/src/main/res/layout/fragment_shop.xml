@@ -18,11 +18,11 @@
                 android:layout_marginBottom="10dp"
                 android:textColor="@color/black"
                 android:textSize="18sp"
-                android:text="Watch Store"
+                android:text="Category"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rcv_shop"
+                android:id="@+id/rcv_category"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
             <TextView

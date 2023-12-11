@@ -3,8 +3,6 @@ package com.example.noworderfoodapp.view.fragment;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -17,28 +15,26 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.noworderfoodapp.App;
 import com.example.noworderfoodapp.CommonUtils;
-import com.example.noworderfoodapp.OnActionCallBack;
 import com.example.noworderfoodapp.R;
 import com.example.noworderfoodapp.database.SQLiteHelper;
 import com.example.noworderfoodapp.databinding.FragmentShopBinding;
 import com.example.noworderfoodapp.entity.Category;
 import com.example.noworderfoodapp.entity.FavoriteShop;
-import com.example.noworderfoodapp.entity.Orders;
 import com.example.noworderfoodapp.entity.Products;
 import com.example.noworderfoodapp.entity.Shop;
+import com.example.noworderfoodapp.view.act.ProductDetailActivity;
 import com.example.noworderfoodapp.view.act.ShopDetailActivity;
+import com.example.noworderfoodapp.view.adapter.CategoryAdapter;
 import com.example.noworderfoodapp.view.adapter.ProductAdapter;
 import com.example.noworderfoodapp.view.adapter.ShopAdapter;
 import com.example.noworderfoodapp.viewmodel.ShopViewModel;
-
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShopFragment extends BaseFragment<FragmentShopBinding, ShopViewModel> implements ShopAdapter.OnItemClick ,ProductAdapter.OnItemClick{
+public class ShopFragment extends BaseFragment<FragmentShopBinding, ShopViewModel> implements ShopAdapter.OnItemClick, ProductAdapter.OnItemClick, CategoryAdapter.OnItemClick {
     public static final String KEY_SHOW_SHOP_DETAIL = "KEY_SHOW_SHOP_DETAIL";
-    private ShopAdapter shopAdapter;
-    private List<Shop> listShop;
+    private CategoryAdapter categoryAdapter;
+    private List<Category> listCategory;
 
     private ProductAdapter productAdapter;
     private List<Products> listProduct;
@@ -54,17 +50,17 @@ public class ShopFragment extends BaseFragment<FragmentShopBinding, ShopViewMode
 
     @Override
     protected void initViews() {
-        listShop = new ArrayList<>();
+        listCategory = new ArrayList<>();
         listProduct = new ArrayList<>();
         mViewModel.getListShopServer();
         mViewModel.getListProducts();
-        mViewModel.getShopMutableLiveData().observe(this, new Observer<List<Shop>>() {
+        mViewModel.getCategoryMutableLiveData().observe(this, new Observer<List<Category>>() {
             @Override
-            public void onChanged(List<Shop> shops) {
-                listShop.clear();
-                listShop.addAll(shops);
-                shopAdapter.notifyDataSetChanged();
-                Log.i("KMFG", "initViews: "+listShop.toString());
+            public void onChanged(List<Category> shops) {
+                listCategory.clear();
+                listCategory.addAll(shops);
+                categoryAdapter.notifyDataSetChanged();
+                Log.i("KMFG", "initViews: "+listCategory.toString());
             }
         });
         mViewModel.getProductsMutableLiveData().observe(this, new Observer<List<Products>>() {
@@ -76,11 +72,11 @@ public class ShopFragment extends BaseFragment<FragmentShopBinding, ShopViewMode
             }
         });
       //  setCallBack((OnActionCallBack) getActivity());
-        shopAdapter = new ShopAdapter(listShop,getContext());
-        LinearLayoutManager manager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL,false);
-        binding.rcvShop.setLayoutManager(manager);
-        binding.rcvShop.setAdapter(shopAdapter);
-        shopAdapter.setOnItemClick(this);
+        categoryAdapter = new CategoryAdapter(listCategory,getContext());
+        LinearLayoutManager manager = new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL,false);
+        binding.rcvCategory.setLayoutManager(manager);
+        binding.rcvCategory.setAdapter(categoryAdapter);
+        categoryAdapter.setOnItemClick(this);
 
         productAdapter = new ProductAdapter(listProduct,getContext());
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
@@ -132,17 +128,23 @@ public class ShopFragment extends BaseFragment<FragmentShopBinding, ShopViewMode
     public void onResume() {
         super.onResume();
       //
-        List<Shop> shopList = mViewModel.getShopMutableLiveData().getValue();
+        List<Category> shopList = mViewModel.getCategoryMutableLiveData().getValue();
         if (shopList != null) {
-            shopAdapter.setListShop(shopList);
+            categoryAdapter.setListCategories(shopList);
         }
-        shopAdapter.setListShop(listShop);
+        categoryAdapter.setListCategories(listCategory);
         binding.lnShopList.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onItemClick(Products products) {
-        Intent intent = new Intent(getActivity(), ShopDetailActivity.class);
+        Intent intent = new Intent(getActivity(), ProductDetailActivity.class);
+        intent.putExtra("product_detail",products);
         getActivity().startActivity(intent);
+    }
+
+    @Override
+    public void onItemClick(Category category) {
+
     }
 }

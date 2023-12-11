@@ -48,6 +48,7 @@ public class BannerAdapter extends RecyclerView.Adapter<BannerAdapter.BannerHold
     @Override
     public void onBindViewHolder(@NonNull BannerHolder holder, int position) {
         Banner data = listBanner.get(position); // lấy vị trí gán data tương ứng cho từng data
+        holder.tvBannerName.setText(data.getName()); // lấy vị trí gán data tương ứng cho từng data
         holder.banner = data;
     }
 

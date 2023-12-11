@@ -16,6 +16,7 @@ import com.example.noworderfoodapp.entity.Shop;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -23,8 +24,11 @@ import retrofit2.Response;
 
 public class HomeShoeViewModel extends ViewModel {
     private MutableLiveData<List<Shop>> shopMutableLiveData;
+    private MutableLiveData<List<Shop>> shopMasterMutableLiveData;
     private MutableLiveData<List<Banner>> bannerMutableLiveData;
-
+    public MutableLiveData<List<Shop>> getMasterShopMutableLiveData() {
+        return shopMasterMutableLiveData;
+    }
     public MutableLiveData<List<Shop>> getShopMutableLiveData() {
         return shopMutableLiveData;
     }
@@ -39,6 +43,7 @@ public class HomeShoeViewModel extends ViewModel {
     public HomeShoeViewModel(){
         bannerMutableLiveData = new MutableLiveData<>();
         shopMutableLiveData = new MutableLiveData<>();
+        shopMasterMutableLiveData = new MutableLiveData<>();
     }
 
     public void getListShopServer(){
@@ -52,10 +57,12 @@ public class HomeShoeViewModel extends ViewModel {
                 if (response.isSuccessful()) {
                     ResponseDTO<List<Shop>> apiResponse = response.body();
                     List<Shop> listShop = apiResponse.getData();
+                    List<Shop> listBranch = filterShopBranch(listShop);
+                    List<Shop> masterShop = filterShopMaster(listShop);
                     // Xử lý dữ liệu User...
                     if (listShop != null) {
-                        shopMutableLiveData.postValue(listShop);
-
+                        shopMutableLiveData.postValue(listBranch);
+                        shopMasterMutableLiveData.postValue(masterShop);
                     }
                 } else {
                     // Xử lý khi có lỗi từ API
@@ -69,6 +76,33 @@ public class HomeShoeViewModel extends ViewModel {
                 Log.i("KMFG", "onFailure: "+t.getMessage());
             }
         });
+    }
+    private List<Shop> filterShopMaster(List<Shop> listShop) {
+        List<Shop> listData = new ArrayList<>();
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            listData = listShop.stream().filter(shop -> shop.getIsBranch() == 1).collect(Collectors.toList());
+        } else {
+            for (Shop shop : listShop) {
+                if (shop.getIsBranch() == 1) {
+                    listData.add(shop);
+                }
+            }
+        }
+        return listData;
+    }
+
+    private List<Shop> filterShopBranch(List<Shop> listShop) {
+        List<Shop> listData = new ArrayList<>();
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+           listData = listShop.stream().filter(shop -> shop.getIsBranch() == 0).collect(Collectors.toList());
+        } else {
+            for (Shop shop : listShop) {
+                if (shop.getIsBranch() == 0) {
+                    listData.add(shop);
+                }
+            }
+        }
+        return listData;
     }
 
 
