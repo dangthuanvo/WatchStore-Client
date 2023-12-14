@@ -3,6 +3,8 @@ package com.example.noworderfoodapp.view.fragment;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -27,17 +29,23 @@ import com.example.noworderfoodapp.view.act.ShopDetailActivity;
 import com.example.noworderfoodapp.view.adapter.CategoryAdapter;
 import com.example.noworderfoodapp.view.adapter.ProductAdapter;
 import com.example.noworderfoodapp.view.adapter.ShopAdapter;
+import com.example.noworderfoodapp.view.dialog.FilterOptionDialog;
 import com.example.noworderfoodapp.viewmodel.ShopViewModel;
+
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-public class ShopFragment extends BaseFragment<FragmentShopBinding, ShopViewModel> implements ShopAdapter.OnItemClick, ProductAdapter.OnItemClick, CategoryAdapter.OnItemClick {
+public class ShopFragment extends BaseFragment<FragmentShopBinding, ShopViewModel> implements ShopAdapter.OnItemClick, ProductAdapter.OnItemClick, CategoryAdapter.OnItemClick, FilterOptionDialog.OnItemClick {
     public static final String KEY_SHOW_SHOP_DETAIL = "KEY_SHOW_SHOP_DETAIL";
     private CategoryAdapter categoryAdapter;
     private List<Category> listCategory;
 
     private ProductAdapter productAdapter;
     private List<Products> listProduct;
+    private List<Products> listAllProduct;
     @Override
     protected Class<ShopViewModel> getViewModelClass() {
         return ShopViewModel.class;
@@ -52,6 +60,7 @@ public class ShopFragment extends BaseFragment<FragmentShopBinding, ShopViewMode
     protected void initViews() {
         listCategory = new ArrayList<>();
         listProduct = new ArrayList<>();
+        listAllProduct = new ArrayList<>();
         mViewModel.getListShopServer();
         mViewModel.getListProducts();
         mViewModel.getCategoryMutableLiveData().observe(this, new Observer<List<Category>>() {
@@ -68,6 +77,7 @@ public class ShopFragment extends BaseFragment<FragmentShopBinding, ShopViewMode
             public void onChanged(List<Products> products) {
                 listProduct.clear();
                 listProduct.addAll(products);
+                listAllProduct.addAll(products);
                 productAdapter.notifyDataSetChanged();
             }
         });
@@ -83,8 +93,49 @@ public class ShopFragment extends BaseFragment<FragmentShopBinding, ShopViewMode
         binding.rcvWatchProduct.setLayoutManager(gridLayoutManager);
         binding.rcvWatchProduct.setAdapter(productAdapter);
         productAdapter.setOnItemClick(this);
+        binding.tvAllProduct.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listProduct.clear();
+                listProduct.addAll(listAllProduct);
+                productAdapter.setProductsList(listProduct);
+            }
+        });
+        binding.tbFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FilterOptionDialog filterOptionDialog = new FilterOptionDialog();
+                filterOptionDialog.show(getActivity().getSupportFragmentManager(), FilterOptionDialog.TAG);
+                filterOptionDialog.setOnItemClick(ShopFragment.this);
+            }
+        });
     }
-
+        private void sortByPriceDescending(List<Products> productList) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            productList.sort(Comparator.comparingDouble(Products::getPrice).reversed());
+        } else {
+            // Sắp xếp trên Android dưới 7.0
+            Collections.sort(productList, new Comparator<Products>() {
+                @Override
+                public int compare(Products product1, Products product2) {
+                    return Double.compare(product2.getPrice(), product1.getPrice());
+                    // Đảo ngược giá trị để sắp xếp giảm dần
+                }
+            });
+        }
+    }
+    private void sortByPriceAscending(List<Products> productList) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Collections.sort(productList, Comparator.comparingDouble(Products::getPrice));
+        } else {
+            Collections.sort(productList, new Comparator<Products>() {
+                @Override
+                public int compare(Products product1, Products product2) {
+                    return Double.compare(product1.getPrice(), product2.getPrice());
+                }
+            });
+        }
+    }
     @Override
     public void onItemClick(Shop shop) {
         Intent intent = new Intent(getActivity(), ShopDetailActivity.class);
@@ -145,6 +196,23 @@ public class ShopFragment extends BaseFragment<FragmentShopBinding, ShopViewMode
 
     @Override
     public void onItemClick(Category category) {
+        listProduct.clear();
+        listProduct.addAll(category.getProducts());
+        productAdapter.setProductsList(listProduct);
+    }
 
+    @Override
+    public void onItemClick(String key) {
+        if (key.equals(FilterOptionDialog.KEY_REDUCE)) {
+            listProduct.clear();
+            sortByPriceDescending(listAllProduct);
+            listProduct.addAll(listAllProduct);
+            productAdapter.setProductsList(listProduct);
+        } else {
+            listProduct.clear();
+            sortByPriceAscending(listAllProduct);
+            listProduct.addAll(listAllProduct);
+            productAdapter.setProductsList(listProduct);
+        }
     }
 }

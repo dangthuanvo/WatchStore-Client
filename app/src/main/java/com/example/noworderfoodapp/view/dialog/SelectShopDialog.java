@@ -1,6 +1,7 @@
 package com.example.noworderfoodapp.view.dialog;
 
 import android.app.Dialog;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,11 +14,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.noworderfoodapp.R;
+import com.example.noworderfoodapp.entity.Category;
+import com.example.noworderfoodapp.entity.Products;
 import com.example.noworderfoodapp.entity.Shop;
 import com.example.noworderfoodapp.view.adapter.ShopAdapter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 public class SelectShopDialog extends DialogFragment implements ShopAdapter.OnItemClick {
 
@@ -46,15 +50,38 @@ public class SelectShopDialog extends DialogFragment implements ShopAdapter.OnIt
         if (bundle != null) {
             // Lấy danh sách sản phẩm từ bundle
             Serializable serializable = bundle.getSerializable("shopList");
+            String key = bundle.getString("key_product");
             if (serializable instanceof ArrayList) {
-                ArrayList<Shop> productList = (ArrayList<Shop>) serializable;
-                shopAdapter = new ShopAdapter(productList,getContext());
+                ArrayList<Shop> shopList = (ArrayList<Shop>) serializable;
+                List<Shop> dataShop = filterShopsByKey(shopList,key);
+                shopAdapter = new ShopAdapter(dataShop,getContext());
                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
                 rcvShop.setLayoutManager(linearLayoutManager);
                 rcvShop.setAdapter(shopAdapter);
                 shopAdapter.setOnItemClick(this);
             }
         }
+    }
+
+    private List<Shop> filterShopsByKey(List<Shop> shopList, String keyToFind) {
+        List<Shop> result = new ArrayList<>();
+
+        for (Shop shop : shopList) {
+            if (shop.getCategories() != null) {
+                for (Category category : shop.getCategories()) {
+                    if (category.getProducts() != null) {
+                        for (Products product : category.getProducts()) {
+                            if (keyToFind.equals(product.getName())) {
+                                result.add(shop);
+                                break; // Thoát vòng lặp khi tìm thấy một sản phẩm
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return result;
     }
     private OnItemClick callBack;
 
@@ -64,7 +91,7 @@ public class SelectShopDialog extends DialogFragment implements ShopAdapter.OnIt
 
     @Override
     public void onItemClick(Shop shop) {
-
+        callBack.onItemClick(shop);
     }
 
     @Override
@@ -73,6 +100,6 @@ public class SelectShopDialog extends DialogFragment implements ShopAdapter.OnIt
     }
 
     public interface OnItemClick {
-        void onItemClick(String key);
+        void onItemClick(Shop key);
     }
 }

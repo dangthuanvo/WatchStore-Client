@@ -5,13 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
 public class ApiClient {
     private static Retrofit retrofit;
-    public static String BASE_URL = "http://192.168.21.214:8080";
-   //  public static String BASE_URL = "http://172.21.64.1:8080";
+   // public static String BASE_URL = "http://192.168.21.214:8080";
+     public static String BASE_URL = "http://192.168.0.125:8080";
   //  public static String BASE_URL = "http://192.168.43.146:8080";
    public static Retrofit getRetrofitInstance() {
        if (retrofit == null) {

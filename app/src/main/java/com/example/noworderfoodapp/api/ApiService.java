@@ -70,6 +70,9 @@ public interface ApiService {
     @POST("/promotion/edit")
     Call<ResponseDTO<Void>> updatePromotion(@Body Promotion promotion);
 
+    @POST("/products/edit")
+    Call<ResponseDTO<Void>> updateProducts(@Body Products products);
+
     @POST("/orders/update")
     Call<ResponseDTO<Void>> orderUpdate(@Body Orders orders);
 

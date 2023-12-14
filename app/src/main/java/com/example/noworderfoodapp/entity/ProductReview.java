@@ -25,7 +25,10 @@ public class ProductReview implements Serializable {
         this.rating = rating;
         this.comment = comment;
     }
-
+    public ProductReview(String comment, int rating) {
+        this.rating = rating;
+        this.comment = comment;
+    }
     @Override
     public String toString() {
         return "ProductReview{" +
