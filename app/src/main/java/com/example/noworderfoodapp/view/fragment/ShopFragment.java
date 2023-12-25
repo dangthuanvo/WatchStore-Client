@@ -24,6 +24,7 @@ import com.example.noworderfoodapp.entity.Category;
 import com.example.noworderfoodapp.entity.FavoriteShop;
 import com.example.noworderfoodapp.entity.Products;
 import com.example.noworderfoodapp.entity.Shop;
+import com.example.noworderfoodapp.view.act.CartUserActivity;
 import com.example.noworderfoodapp.view.act.ProductDetailActivity;
 import com.example.noworderfoodapp.view.act.ShopDetailActivity;
 import com.example.noworderfoodapp.view.adapter.CategoryAdapter;
@@ -81,6 +82,13 @@ public class ShopFragment extends BaseFragment<FragmentShopBinding, ShopViewMode
                 productAdapter.notifyDataSetChanged();
             }
         });
+        binding.topBarAction.ivCartUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), CartUserActivity.class);
+                startActivity(intent);
+            }
+        });
       //  setCallBack((OnActionCallBack) getActivity());
         categoryAdapter = new CategoryAdapter(listCategory,getContext());
         LinearLayoutManager manager = new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL,false);
@@ -99,6 +107,16 @@ public class ShopFragment extends BaseFragment<FragmentShopBinding, ShopViewMode
                 listProduct.clear();
                 listProduct.addAll(listAllProduct);
                 productAdapter.setProductsList(listProduct);
+            }
+        });
+        binding.imgSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Get the search query from the EditText
+                String searchQuery = binding.edSearch.getText().toString();
+
+                // Filter products based on the search query
+                filterProducts(searchQuery);
             }
         });
         binding.tbFilter.setOnClickListener(new View.OnClickListener() {
@@ -135,6 +153,21 @@ public class ShopFragment extends BaseFragment<FragmentShopBinding, ShopViewMode
                 }
             });
         }
+
+    }
+    private void filterProducts(String query) {
+        List<Products> filteredList = new ArrayList<>();
+
+        for (Products product : listAllProduct) {
+            if (product.getName().toLowerCase().contains(query.toLowerCase())) {
+                filteredList.add(product);
+            }
+        }
+
+        // Update the product list in the adapter
+        listProduct.clear();
+        listProduct.addAll(filteredList);
+        productAdapter.setProductsList(listProduct);
     }
     @Override
     public void onItemClick(Shop shop) {
@@ -178,7 +211,6 @@ public class ShopFragment extends BaseFragment<FragmentShopBinding, ShopViewMode
     @Override
     public void onResume() {
         super.onResume();
-      //
         List<Category> shopList = mViewModel.getCategoryMutableLiveData().getValue();
         if (shopList != null) {
             categoryAdapter.setListCategories(shopList);
